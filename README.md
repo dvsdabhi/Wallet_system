@@ -36,8 +36,8 @@ cd your-project
 
 ```bash
 python -m venv env
-source env/bin/activate  # On Windows:
-env\Scripts\activate
+source env/bin/activate
+env\Scripts\activate  # On Windows:
 ```
 
 ### 3. Install dependencies
