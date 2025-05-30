@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Transaction
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,3 +15,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+    
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = '__all__'
+        read_only_fields = ['sender', 'timestamp', 'sender_ip']
