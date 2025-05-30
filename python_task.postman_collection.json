@@ -1,0 +1,191 @@
+{
+	"info": {
+		"_postman_id": "2fe06194-656b-47fe-bab4-f2a198d3f5c3",
+		"name": "python_task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42449824",
+		"_collection_link": "https://delta5-1251.postman.co/workspace/1a19901f-1686-456c-8c66-b1ff8de5f7ae/collection/42449824-2fe06194-656b-47fe-bab4-f2a198d3f5c3?action=share&source=collection_link&creator=42449824"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"jaydip@gmail.com\",\n  \"name\": \"Jaydip\",\n  \"password\": \"jaydip@123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/api/register/",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"register",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"divyesh@gmail.com\",\n  \"password\": \"divyesh@123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/api/login/",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"login",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getWalletBalance",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/api/wallet/",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"wallet",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transaction",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"receiver_email\": \"jaydip@gmail.com\",\n  \"amount\": 1,\n  \"from_currency\":\"USD\",\n  \"to_currency\" : \"INR\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/transfer/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"transfer",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTransaction",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/transaction/?tx_type=received&from_date=2025-05-29&to_date=2025-05-30",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"transaction",
+						""
+					],
+					"query": [
+						{
+							"key": "tx_type",
+							"value": "received"
+						},
+						{
+							"key": "from_date",
+							"value": "2025-05-29"
+						},
+						{
+							"key": "to_date",
+							"value": "2025-05-30"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
