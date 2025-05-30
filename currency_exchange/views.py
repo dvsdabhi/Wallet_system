@@ -4,8 +4,9 @@ from rest_framework import status
 
 from .serializers import RegisterSerializer
 from .models import User, Wallet
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
@@ -42,3 +43,13 @@ def login_user(request):
         })
     else:
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_wallet_balance(request):
+    user = request.user
+    try:
+        wallet = Wallet.objects.get(user_id=user.id)
+        return Response({'name':user.name,'inr_balance': wallet.inr_balance})
+    except:
+        return Response({"detail": "Wallet not found"}, status=404)
