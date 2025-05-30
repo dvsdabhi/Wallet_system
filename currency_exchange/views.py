@@ -1,4 +1,5 @@
-# import requests
+from decimal import Decimal
+import requests
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -53,7 +54,7 @@ def view_wallet_balance(request):
     user = request.user
     try:
         wallet = Wallet.objects.get(user_id=user.id)
-        return Response({'name':user.name,'inr_balance': wallet.inr_balance})
+        return Response({'name':user.name,'inr_balance': wallet.inr_balance,'usd_balance':wallet.usd_balance})
     except:
         return Response({"detail": "Wallet not found"}, status=404)
     
@@ -62,6 +63,8 @@ def view_wallet_balance(request):
 def transfer_amount(request):
     sender = request.user
     receiver_email = request.data.get('receiver_email')
+    from_currency = request.data.get('from_currency')
+    to_currency = request.data.get('to_currency')
     amount = request.data.get('amount')
     
     try:
@@ -75,19 +78,38 @@ def transfer_amount(request):
     except Wallet.DoesNotExist:
         return Response({"error": "Sender or Receiver wallet not found"}, status=404)
     
-    if sender_wallet.inr_balance < amount:
-        return Response({"error": "Insufficient balance"}, status=400)
+    if from_currency == 'INR':
+        if sender_wallet.inr_balance < amount:
+            return Response({"error": "Insufficient INR balance"}, status=400)
+    elif from_currency == 'USD':
+        if sender_wallet.usd_balance < amount:
+            return Response({"error": "Insufficient USD balance"}, status=400)
+    
+    try:
+        url = f'https://api.frankfurter.app/latest?amount={amount}&from={from_currency}&to={to_currency}'
+        res = requests.get(url)
+        converted_amount = Decimal(str(res.json()['rates'][to_currency]))
+    except:
+        return Response({"error": "Failed to fetch currency rate"}, status=500)
     
     with db_transaction.atomic():
-        sender_wallet.inr_balance -= amount
-        receiver_wallet.inr_balance += amount
+        if from_currency == "INR":
+            sender_wallet.inr_balance -= amount
+        else:
+            sender_wallet.usd_balance -= amount
+            
+        if to_currency == "INR":
+            receiver_wallet.inr_balance += converted_amount
+        else:
+            receiver_wallet.usd_balance += converted_amount
+            
         sender_wallet.save()
         receiver_wallet.save()
         
         transaction = Transaction.objects.create(
             sender=sender,
             receiver=receiver,
-            amount=amount,
+            amount=converted_amount,
             sender_ip=get_client_ip(request)
         )
     serializer = TransactionSerializer(transaction)
